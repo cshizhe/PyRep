@@ -131,7 +131,9 @@ class ArmConfigurationPath(ConfigurationPath):
                     pos = pos_vel_accel[0]
                     for i in range(len(lengths)-1):
                         if lengths[i] <= pos <= lengths[i + 1]:
-                            t = (pos - lengths[i]) / (lengths[i + 1] - lengths[i])
+                            # print('pyrep', i, pos, lengths[i], lengths[i+1], (lengths[i + 1] - lengths[i]))
+                            t = (pos - lengths[i]) / np.maximum(lengths[i + 1] - lengths[i], 1e-10)
+                            # print('t', t)
                             # For each joint
                             offset = len(self._arm.joints) * i
                             p1 = self._path_points[
@@ -167,9 +169,9 @@ class ArmConfigurationPath(ConfigurationPath):
         if state >= 0:
             pos = posVelAccel[0]
             for i in range(len(lengths) - 1):
-                # Always execute the last point as pos might overshoot
-                if lengths[i] <= pos <= lengths[i + 1] or i == len(lengths) - 2:
-                    t = (pos - lengths[i]) / (lengths[i + 1] - lengths[i])
+                if lengths[i] <= pos <= lengths[i + 1]:
+                    # print('pyrep', pos, lengths[i], lengths[i+1], (lengths[i + 1] - lengths[i]))
+                    t = (pos - lengths[i]) / np.maximum(lengths[i + 1] - lengths[i], 1e-10)
                     # For each joint
                     offset = len(self._arm.joints) * i
                     p1 = self._path_points[
